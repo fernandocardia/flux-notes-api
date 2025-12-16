@@ -16,18 +16,24 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Notes API')
-    .setDescription('Simple notes, made for GoldenCity test.')
-    .setVersion('0.1')
+    .setDescription(
+      'Simple Notes API for benchmarking purposes. Supports both in-memory and disk persistence.',
+    )
+    .setVersion('0.2')
     .addServer('/v1', 'Local')
     .build();
 
-  const document = () => SwaggerModule.createDocument(app, config, {
-    ignoreGlobalPrefix: true,
-  });
+  const document = () =>
+    SwaggerModule.createDocument(app, config, {
+      ignoreGlobalPrefix: true,
+    });
   SwaggerModule.setup('/', app, document, {
     customSiteTitle: 'Notes API',
   });
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('Error during app bootstrap:', err);
+  process.exit(1);
+});
