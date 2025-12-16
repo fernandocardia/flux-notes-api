@@ -1,6 +1,6 @@
 {
   "name": "test-notes-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Notes API",
   "author": "Fernando Cardia",
   "private": true,
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.1",

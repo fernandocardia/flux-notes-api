@@ -1,7 +1,8 @@
-Simple API for Flux Cloud
+Simple Notes API for Flux Cloud
 =============
 
-It’s a minimal REST API using **NestJS**, an **in-memory repository** and **Swagger**, for a PoC using [Flux Cloud](https://runonflux.com/fluxcloud/). Hope we`re going to see a decentralized cloud in the near future.
+It’s a minimal REST API for a PoC using [Flux Cloud](https://runonflux.com/fluxcloud/).
+The goal is to benchmark requests per second on both memory and file persistence, across the instances. At the present, there`s a mininum of 3 instances per application.
 
 Stack used
 ----------
@@ -12,7 +13,7 @@ Stack used
 
 *   Swagger (OpenAPI)
 
-*   In-memory storage (no DB)
+*   Notes persistence: In-memory and file storage
 
 *   Jest (unit + e2e)
 
@@ -24,18 +25,36 @@ Running locally with Docker
 
 Build the image:
 
-`   docker build -t flux-notes-api .   `
+`docker build -t flux-notes-api .`
 
-Run the container:
+Run the container in default port:
 
-`   docker run -d --rm --name flux-notes-api -p 3013:3000 flux-notes-api   `
+`docker run -d --rm --name flux-notes-api -p 3000:3000 flux-notes-api`
 
-> The app uses a global prefix **/v1** internally.
+> There`s a 1000 notes limit, for a custom one, please set MAX_NOTES env.
+
+Running the container with dev mode:
+
+-------------------
+
+Build the image:
+
+` docker build -f Dockerfile.dev -t flux-notes-api:dev . `
+
+Run the container in default port:
+
+```
+docker run --rm -it \
+  -p 3000:3000 \
+  -v "$(pwd):/app" \
+  -v /app/node_modules \
+  flux-notes-api:dev
+```
 
 API & Docs
 ----------
 
-http://localhost:3013
+http://localhost
 
 
 Endpoints:
@@ -58,23 +77,23 @@ Local development (without Docker)
 
 Install deps:
 
-`   npm install   `
+`npm install`
 
 Run:
 
-`   npm run start:dev   `
+`npm run start:dev`
 
 Open Swagger UI at:
 
-`   http://localhost:3013   `
+`http://localhost:3013`
 
 Tests
 -----
 
 Unit tests:
 
-`   npm run test   `
+`npm run test`
 
 E2E tests:
 
-`   npm run test:e2e   `
+`npm run test:e2e`
