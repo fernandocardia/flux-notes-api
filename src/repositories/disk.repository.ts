@@ -48,13 +48,12 @@ type IndexEntry = {
 
 @Injectable()
 export class DiskRepository {
+  private readonly storagePath: string;
   private readonly maxNotes: number;
-
-  private readonly storageDir = path.resolve(process.cwd(), 'storage');
   // index for quick lookups
-  private readonly indexPath = path.join(this.storageDir, 'notes.index.jsonl');
+  private readonly indexPath: string;
   // notes data
-  private readonly dataPath = path.join(this.storageDir, 'notes.data.jsonl');
+  private readonly dataPath: string;
 
   // fsp for async file operations
   private indexHandle!: fsp.FileHandle;
@@ -67,11 +66,18 @@ export class DiskRepository {
   private writeMutex = new AsyncMutex();
 
   constructor(private readonly config: ConfigService) {
+    const defaultPath = path.resolve(process.cwd(), 'storage');
+
     this.maxNotes = this.config.get<number>('app.maxNotes', 1000);
+    this.storagePath = this.config.get<string>('app.storagePath', defaultPath);
+    // index for quick lookups
+    this.indexPath = path.join(this.storagePath, 'notes.index.jsonl');
+    // notes data
+    this.dataPath = path.join(this.storagePath, 'notes.data.jsonl');
   }
 
   private async init(): Promise<void> {
-    await fsp.mkdir(this.storageDir, { recursive: true });
+    await fsp.mkdir(this.storagePath, { recursive: true });
 
     // opens for append and read
     this.dataHandle = await fsp.open(this.dataPath, 'a+');

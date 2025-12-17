@@ -19,7 +19,7 @@ async function bootstrap() {
     .setDescription(
       'Simple Notes API for benchmarking purposes. Supports both in-memory and disk persistence.',
     )
-    .setVersion('0.2')
+    .setVersion('0.3')
     .addServer('/v1', 'Local')
     .build();
 
