@@ -21,24 +21,25 @@ export class InMemoryRepository {
   }
 
   list(page: number): ListNotesDto {
-    try {
-      const ids = Array.from(this.notes.keys()).sort((a, b) => b - a);
+    const perPage = 50;
+    const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
 
-      const out: Note[] = [];
-      for (const id of ids) {
-        const note = this.notes.get(id)!;
-        out.push(note);
-      }
+    const ids = Array.from(this.notes.keys()).sort((a, b) => b - a);
 
-      return {
-        pages: Math.ceil(out.length / 50),
-        notesCount: out.length,
-        notes: out.slice((page - 1) * 50, page * 50),
-      };
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException('Failed to list notes');
+    const notesCount = ids.length;
+    const pages = Math.ceil(notesCount / perPage);
+
+    const start = (safePage - 1) * perPage;
+    const end = start + perPage;
+    const pageIds = ids.slice(start, end);
+
+    const notes: Note[] = [];
+    for (const id of pageIds) {
+      const note = this.notes.get(id);
+      if (note) notes.push(note);
     }
+
+    return { pages, notesCount, notes };
   }
 
   get(id: number): Note {
