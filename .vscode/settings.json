@@ -3,5 +3,7 @@
     "javascript.preferences.importModuleSpecifier": "relative",
 
     "typescript.preferences.importModuleSpecifierEnding": "minimal",
-    "javascript.preferences.importModuleSpecifierEnding": "minimal"
+    "javascript.preferences.importModuleSpecifierEnding": "minimal",
+
+    "typescript.tsdk": "node_modules/typescript/lib",
 }
