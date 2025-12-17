@@ -183,28 +183,33 @@ export class DiskRepository {
     try {
       await this.ensureReady();
 
+      const perPage = 50;
+      const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+
       const ids = Array.from(this.indexMap.keys())
         .filter((id) => {
           const entry = this.indexMap.get(id);
-          return !this.isDeleted(entry);
+          return entry && !this.isDeleted(entry);
         })
         .sort((a, b) => b - a);
 
-      const out: Note[] = [];
-      for (const id of ids) {
+      const notesCount = ids.length;
+      const pages = Math.ceil(notesCount / perPage);
+
+      const start = (safePage - 1) * perPage;
+      const end = start + perPage;
+      const pageIds = ids.slice(start, end);
+
+      const notes: Note[] = [];
+      for (const id of pageIds) {
         const entry = this.indexMap.get(id)!;
         const raw = await this.readAt(entry.offset, entry.length);
         const jsonLine = raw.trimEnd();
         const disk = JSON.parse(jsonLine) as DiskNoteLine;
-        const note = this.hydrate(disk);
-        out.push(note);
+        notes.push(this.hydrate(disk));
       }
 
-      return {
-        pages: Math.ceil(out.length / 50),
-        notesCount: out.length,
-        notes: out.slice((page - 1) * 50, page * 50),
-      };
+      return { pages, notesCount, notes };
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException('Failed to list notes');
